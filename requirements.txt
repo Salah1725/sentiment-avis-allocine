@@ -4,3 +4,7 @@ matplotlib
 seaborn
 datasets==5.2.0
 jupyter
+torch
+transformers
+accelerate
+sentencepiece
