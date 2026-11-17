@@ -11,3 +11,4 @@ sentencepiece
 anthropic==2.9.0
 python-dotenv
 tqdm
+ollama
