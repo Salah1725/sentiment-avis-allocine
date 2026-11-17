@@ -1,0 +1,3 @@
+modele,accuracy_500,latence_ms,avis_par_seconde
+tfidf,0.932,0.7,6337.2
+qwen,0.956,285.3,3.4

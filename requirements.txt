@@ -12,3 +12,8 @@ anthropic==2.9.0
 python-dotenv
 tqdm
 ollama
+fastapi
+uvicorn
+streamlit
+pytest
+httpx
