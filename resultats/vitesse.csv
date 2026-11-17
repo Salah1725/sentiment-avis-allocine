@@ -1,3 +1,4 @@
 modele,accuracy_500,latence_ms,avis_par_seconde
-tfidf,0.932,0.7,6337.2
+tfidf,0.932,0.6,6249.2
+camembert,0.952,82.7,5.9
 qwen,0.956,285.3,3.4

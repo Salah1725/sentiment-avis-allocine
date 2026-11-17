@@ -16,19 +16,21 @@ Le projet va jusqu'au produit : modèles sauvegardés, **API FastAPI** testée e
 | | TF-IDF + bigrammes | CamemBERT fine-tuné | Qwen 2.5 3B zero-shot |
 |---|---|---|---|
 | **Accuracy (validation, 20 000 avis)** | 93,8 % | **95,8 %** | — |
-| **Accuracy (mêmes 500 avis)** | 93,2 % | *à mesurer* | **95,6 %** (± 1,8) |
+| **Accuracy (mêmes 500 avis)** | 93,2 % | 95,2 % | **95,6 %** |
 | Avis d'entraînement | 160 000 | 20 000 | **0** |
 | Entraînement | quelques minutes (CPU) | 4 min (GPU T4, Colab) | aucun |
-| Latence, un avis (CPU) | **0,7 ms** | *à mesurer* | 285 ms |
-| Débit (CPU) | **~6 300 avis/s** | *à mesurer* | ~3,4 avis/s |
+| Latence, un avis (CPU) | **0,6 ms** | 83 ms | 285 ms |
+| Débit, par paquets (CPU) | **~6 200 avis/s** | ~6 avis/s | ~3,4 avis/s |
+| Taille du modèle | 10 Mo | 440 Mo | 1,9 Go |
 | Avis pièges réussis (voir plus bas) | 1 / 3 | 3 / 3 | 3 / 3 |
 
-Mesures de vitesse : [`mesurer_vitesse.py`](mesurer_vitesse.py), sur mon PC, CPU uniquement.
+Mesures de vitesse : [`mesurer_vitesse.py`](mesurer_vitesse.py), sur mon PC, **CPU uniquement** (résultats dans [`resultats/vitesse.csv`](resultats/vitesse.csv)). Sur 500 avis, la marge d'erreur de l'accuracy est d'environ ± 1,8 point : CamemBERT et Qwen ne sont pas distinguables.
 
 ### Ce que j'en retiens
-- **CamemBERT fait 32 % d'erreurs en moins que TF-IDF** (4,2 % contre 6,2 %) avec **8 fois moins de données**, grâce au pré-entraînement.
-- **Un petit LLM local, sans aucun exemple étiqueté, fait aussi bien que CamemBERT** : sur 500 avis, l'écart est dans la marge d'erreur. Il fait mieux que TF-IDF entraîné sur 160 000 avis.
-- **Mais il est environ 400 fois plus lent que TF-IDF.** Pour classer un million d'avis par jour, je choisirais CamemBERT (rapide par paquets sur GPU) ou TF-IDF si le budget est minimal. Pour un prototype sans données étiquetées, un LLM en zero-shot.
+- **CamemBERT fait 32 % d'erreurs en moins que TF-IDF** (4,2 % contre 6,2 % sur 20 000 avis) avec **8 fois moins de données**, grâce au pré-entraînement.
+- **Un petit LLM local, sans aucun exemple étiqueté, fait aussi bien que CamemBERT** : sur les mêmes 500 avis, l'écart est dans la marge d'erreur. Il fait mieux que TF-IDF entraîné sur 160 000 avis.
+- **La précision se paie en vitesse** : sur CPU, CamemBERT est environ 140 fois plus lent que TF-IDF, et Qwen environ 450 fois. Sur CPU, traiter CamemBERT par paquets n'aide même pas : les avis courts sont complétés (*padding*) jusqu'à la longueur du plus long, ce qui gaspille du calcul. Un GPU changerait complètement ces chiffres.
+- **Pour classer un million d'avis par jour**, je choisirais CamemBERT sur GPU, ou TF-IDF si le budget est minimal et que 2 points d'accuracy en moins sont acceptables. **Pour un prototype sans données étiquetées**, un LLM en zero-shot.
 - **Les deux se combinent** : un LLM peut étiqueter des données, sur lesquelles on entraîne ensuite un petit modèle rapide pour la production (une forme de distillation).
 
 ## Analyse d'erreurs
